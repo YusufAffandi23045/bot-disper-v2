@@ -33,14 +33,13 @@ loadHolidays();
 // ===== CEK JAM KERJA (MODE OFFLINE) =====
 export function isWorkingHours() {
   const now = new Date();
+  // Tambah offset 7 jam untuk WIB
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const wib = new Date(utc + (3600000 * 7));
 
-  const wib = new Date(
-    now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
-  );
-
-  const day = wib.getDay(); // 0 Minggu, 6 Sabtu
+  const day = wib.getDay(); // 0-6
   const hour = wib.getHours();
-  const today = wib.toISOString().split("T")[0];
+  const today = wib.toISOString().split("T")[0]; // YYYY-MM-DD
 
   // ===== LIBUR NASIONAL / CUTI BERSAMA =====
   if (holidayDates.includes(today)) return false;

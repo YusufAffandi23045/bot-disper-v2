@@ -4,7 +4,7 @@ import { logActivity } from "../utils/logger.js";
 import { isWorkingHours, outsideWorkingHoursMessage } from "../utils/time.js";
 import { resetIdleTimer } from "../utils/idle.js";
 import { countOutsideMessage } from "../utils/outsideCounter.js";
-import { resetState } from "../utils/state.js";
+import { resetState, getState } from "../utils/state.js"; // <--- TAMBAH getState
 
 const ADMIN_JID = "6281334580496@s.whatsapp.net";
 
@@ -42,7 +42,13 @@ export async function handleMessage(sock, msg, BOT_CONFIG) {
   if (!isWorkingHours()) {
     await countOutsideMessage(sock, from, ADMIN_JID);
 
-    if (input !== "1") {
+    // Ambil posisi menu user saat ini
+    const currentState = getState(from);
+
+    // Izinkan jika input "1" ATAU user sudah berada di dalam menu 1 (Sekretariat)
+    const isAllowed = input === "1" || (currentState && currentState.startsWith("1"));
+
+    if (!isAllowed) {
       await sock.sendMessage(from, {
         text: outsideWorkingHoursMessage() + "\n\nKetik *1* untuk Sekretariat."
       });
