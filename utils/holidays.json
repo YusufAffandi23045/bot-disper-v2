@@ -1,0 +1,30 @@
+{
+  "tahun": 2026,
+  "negara": "Indonesia",
+  "keterangan": "Termasuk Estimasi Cuti Bersama",
+  "hari_libur_dan_cuti": [
+    { "tanggal": "2026-01-01", "keterangan": "Tahun Baru 2026 Masehi", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-02-17", "keterangan": "Isra Mikraj Nabi Muhammad SAW", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-02-18", "keterangan": "Tahun Baru Imlek 2577 Kongzili", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-02-19", "keterangan": "Cuti Bersama Imlek", "tipe": "Cuti Bersama" },
+    { "tanggal": "2026-03-18", "keterangan": "Cuti Bersama Idul Fitri", "tipe": "Cuti Bersama" },
+    { "tanggal": "2026-03-19", "keterangan": "Cuti Bersama Idul Fitri", "tipe": "Cuti Bersama" },
+    { "tanggal": "2026-03-20", "keterangan": "Hari Raya Idul Fitri 1447 H & Hari Suci Nyepi", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-03-21", "keterangan": "Hari Raya Idul Fitri 1447 H", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-03-23", "keterangan": "Cuti Bersama Idul Fitri / Nyepi", "tipe": "Cuti Bersama" },
+    { "tanggal": "2026-03-24", "keterangan": "Cuti Bersama Idul Fitri", "tipe": "Cuti Bersama" },
+    { "tanggal": "2026-04-03", "keterangan": "Wafat Yesus Kristus", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-05-01", "keterangan": "Hari Buruh Internasional", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-05-14", "keterangan": "Kenaikan Yesus Kristus", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-05-15", "keterangan": "Cuti Bersama Kenaikan Yesus Kristus", "tipe": "Cuti Bersama" },
+    { "tanggal": "2026-05-22", "keterangan": "Hari Raya Waisak 2570 BE", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-05-27", "keterangan": "Hari Raya Idul Adha 1447 H", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-05-28", "keterangan": "Cuti Bersama Idul Adha", "tipe": "Cuti Bersama" },
+    { "tanggal": "2026-06-01", "keterangan": "Hari Lahir Pancasila", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-06-16", "keterangan": "Tahun Baru Islam 1448 H", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-08-17", "keterangan": "Hari Kemerdekaan RI", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-08-25", "keterangan": "Maulid Nabi Muhammad SAW", "tipe": "Libur Nasional" },
+    { "tanggal": "2026-12-24", "keterangan": "Cuti Bersama Natal", "tipe": "Cuti Bersama" },
+    { "tanggal": "2026-12-25", "keterangan": "Hari Raya Natal", "tipe": "Libur Nasional" }
+  ]
+}
