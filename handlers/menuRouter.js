@@ -10,9 +10,16 @@ function getNodeByPath(path) {
   const parts = path.split(".");
   let node = MENU;
 
-  for (const p of parts) {
-    if (!node[p]) return null;
-    node = node[p].sub || node[p];
+  for (let i = 0; i < parts.length; i++) {
+    const key = parts[i];
+    if (!node[key]) return null;
+
+    node = node[key];
+
+    if (i < parts.length - 1) {
+      if (!node.sub) return null;
+      node = node.sub;
+    }
   }
   return node;
 }
@@ -20,33 +27,54 @@ function getNodeByPath(path) {
 // ===== MAIN ROUTER =====
 export async function routeMenu(sock, from, input) {
   const currentState = getState(from);
-  const nextPath = currentState ? `${currentState}.${input}` : input;
 
-  // ===== KEMBALI (0) =====
+  const currentNode = getNodeByPath(currentState);
+  if (currentNode && !currentNode.sub) {
+    setState(from, null);
+  }
+
+  // ===== MENU KEMBALI (FIX LOOP & NULL) =====
   if (input === "0") {
     if (!currentState) {
       await showMenu(sock, from, "");
       return;
     }
-    // Mundur satu langkah
-    const backPath = currentState.split(".").slice(0, -1).join(".");
-    // Jika backPath kosong, berarti kembali ke menu utama (null)
+
+    const backPath = currentState
+      ? currentState.split(".").slice(0, -1).join(".")
+      : null;
+
     setState(from, backPath || null);
     await showMenu(sock, from, backPath);
     return;
   }
 
-  // ===== VALIDASI INPUT (FIX #2: RESET JIKA SALAH) =====
-  // Jika input bukan angka, jangan biarkan user stuck di state lama.
-  // Reset ke awal biar bersih.
+  // ===== VALIDASI INPUT =====
   if (!/^\d+$/.test(input)) {
-    setState(from, null); // <--- RESET STATE
-    await sock.sendMessage(from, { 
-        text: "❌ Input salah. Kembali ke menu utama." 
+  // ⬇️ JIKA BELUM ADA STATE → SELAMAT DATANG
+  if (!getState(from)) {
+    await sock.sendMessage(from, {
+      text:
+        "👋 *Selamat datang di Layanan Informasi*\n" +
+        "*Dinas Perikanan Kabupaten Gresik*\n\n" +
+        "Silakan pilih menu di bawah ini:"
     });
     await showMenu(sock, from, "");
     return;
   }
+
+  // ⬇️ JIKA SUDAH DI MENU → INPUT SALAH
+  await sock.sendMessage(from, {
+    text: "❌ Input salah.\nSilakan pilih angka yang tersedia."
+  });
+  await showMenu(sock, from, getState(from));
+  return;
+}
+
+
+  // ===== PATH =====
+  const cleanState = getState(from);
+  const nextPath = cleanState ? `${cleanState}.${input}` : input;
 
   const node = getNodeByPath(nextPath);
 
@@ -55,18 +83,15 @@ export async function routeMenu(sock, from, input) {
     await sock.sendMessage(from, {
       text: "❌ Menu tidak tersedia.\nSilakan pilih angka yang benar."
     });
-    // Jangan reset state di sini, beri kesempatan user mencoba angka lain
-    // tapi tetap tampilkan menu saat ini sebagai panduan
-    await showMenu(sock, from, currentState); 
+    await showMenu(sock, from, cleanState);
     return;
   }
 
-  // Update State ke posisi baru
+  // Update State
   setState(from, nextPath);
 
-  // ===== LEAF (UJUNG MENU) (FIX #3: RESET SETELAH SELESAI) =====
+  // ===== LEAF =====
   if (!node.sub) {
-    // 1. Kirim File PDF (jika ada)
     if (node.file?.type === "pdf") {
       if (!fs.existsSync(node.file.path)) {
         await sock.sendMessage(from, {
@@ -81,12 +106,10 @@ export async function routeMenu(sock, from, input) {
       }
     }
 
-    // 2. Kirim Konten Teks (jika ada)
     if (node.content) {
       await sock.sendMessage(from, { text: node.content });
     }
 
-    // 3. Kirim Kontak (jika ada)
     if (node.contact) {
       await sock.sendMessage(from, {
         text:
@@ -95,17 +118,14 @@ export async function routeMenu(sock, from, input) {
       });
     }
 
-    // 🔥 VITAL FIX: RESET STATE SETELAH LEAF 🔥
-    // User sudah selesai di menu ini. Jangan biarkan state menggantung.
-    setState(from, null); 
-
+    setState(from, null);
     await sock.sendMessage(from, {
       text: "✅ Selesai.\n\nKetik *menu* untuk kembali ke awal."
     });
     return;
   }
 
-  // Jika bukan leaf (masih ada sub-menu), tampilkan listnya
+  // ===== SUB MENU =====
   await showMenu(sock, from, nextPath);
 }
 
@@ -114,9 +134,20 @@ async function showMenu(sock, from, path) {
   const node = getNodeByPath(path);
   if (!node) return;
 
+  let menuItems;
+
+  if (node.sub) {
+    menuItems = node.sub;
+  } else {
+    menuItems = node;
+  }
+
   let text = "📋 *Silakan pilih menu:*\n\n";
-  for (const key in node) {
-    text += `${key}. ${node[key].name}\n`;
+
+  for (const key in menuItems) {
+    const item = menuItems[key];
+    if (!item?.name) continue;
+    text += `${key}. ${item.name}\n`;
   }
 
   text += "\n0. 🔙 Kembali\nmenu. 🏠 Menu Utama";
